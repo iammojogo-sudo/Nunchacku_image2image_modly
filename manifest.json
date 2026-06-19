@@ -1,0 +1,87 @@
+{
+  "id": "qwen_image_edit_nunchaku",
+  "name": "Qwen-Image-Edit (Nunchaku) Image Edit",
+  "type": "model",
+  "source": "https://github.com/iammojogo-sudo/qwen_nunchaku_edit_modly",
+  "description": "Higher-quality, faster instruction-based image editing with Qwen-Image-Edit quantized via Nunchaku SVDQuant 4-bit. Feed one image plus a text instruction (e.g. 'rotate the object 180 degrees to show the back') and get edited image(s) out. Apache-2.0 and ungated — no login. Optimized INT4/FP4 kernels + per-block offload run well on 12GB and down to ~3-4GB. Requires an NVIDIA Ampere (RTX 30-series) or newer GPU and a one-time Nunchaku wheel install (auto-attempted at setup).",
+  "version": "1.0.0",
+  "author": "iammojogo",
+  "vram_gb": 6,
+  "tags": [
+    "image-to-image",
+    "image-editing",
+    "qwen",
+    "nunchaku",
+    "svdquant",
+    "i2i"
+  ],
+  "nodes": [
+    {
+      "id": "edit",
+      "name": "Edit Image",
+      "input": "text",
+      "inputs": ["text", "image"],
+      "output": "image",
+      "hf_repo": "nunchaku-tech/nunchaku-qwen-image-edit",
+      "download_check": "model_index.json",
+      "params_schema": [
+        {
+          "id": "rank",
+          "label": "Quality (rank)",
+          "type": "select",
+          "default": "128",
+          "options": [
+            { "value": "128", "label": "r128 — best quality (default)" },
+            { "value": "32",  "label": "r32 — smaller / a bit faster" }
+          ]
+        },
+        {
+          "id": "num_blocks_on_gpu",
+          "label": "Blocks on GPU",
+          "type": "select",
+          "default": "auto",
+          "options": [
+            { "value": "auto", "label": "Auto (by VRAM)" },
+            { "value": "1",    "label": "1 — minimum VRAM (~3-4GB), slowest" },
+            { "value": "8",    "label": "8 — ~8GB cards" },
+            { "value": "20",   "label": "20 — ~12GB cards" },
+            { "value": "36",   "label": "36 — 16GB+, faster" }
+          ]
+        },
+        {
+          "id": "steps",
+          "label": "Steps",
+          "type": "int",
+          "default": 30,
+          "min": 8,
+          "max": 50
+        },
+        {
+          "id": "true_cfg_scale",
+          "label": "CFG Scale",
+          "type": "float",
+          "default": 4.0,
+          "min": 1,
+          "max": 10
+        },
+        {
+          "id": "num_images",
+          "label": "Number of Outputs",
+          "type": "int",
+          "default": 1,
+          "min": 1,
+          "max": 4
+        },
+        {
+          "id": "seed",
+          "label": "Seed",
+          "type": "int",
+          "default": 0,
+          "min": 0,
+          "max": 4294967295
+        }
+      ]
+    }
+  ],
+  "generator_class": "QwenNunchakuEditGenerator"
+}
