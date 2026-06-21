@@ -89,6 +89,7 @@ def setup(python_exe, ext_dir, gpu_sm):
         "transformers>=4.53.0",
         "accelerate>=0.34.0",
         "huggingface_hub>=0.24.0",
+        "hf_transfer",
         "safetensors",
         "sentencepiece",
         "protobuf",
