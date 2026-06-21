@@ -15,6 +15,15 @@ def print(*args, **kwargs):
     kwargs.setdefault("file", sys.stderr)
     _print(*args, **kwargs)
 
+# Enable HF's fast multi-connection downloader if available — the big single
+# files here (text encoder shards, nunchaku transformer) are much faster with
+# it on. Silently no-ops if hf_transfer isn't installed.
+try:
+    import hf_transfer  # noqa: F401
+    os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+except ImportError:
+    pass
+
 # Base pipeline components (text encoder / vae / tokenizer / scheduler). Public,
 # Apache-2.0, ungated. The original 40GB transformer in this repo is skipped on
 # download — Nunchaku supplies the (much smaller) quantized transformer instead.
@@ -207,6 +216,7 @@ class QwenNunchakuEditGenerator(BaseGenerator):
                 prompt = str(_v).strip()
                 break
         if not prompt:
+            print("[Qwen-NK] no prompt found; params keys received: %r" % (sorted(params.keys()),))
             raise ValueError("no edit instruction — connect a Text node to the Edit node's text input")
 
         image = self._to_pil(image_bytes)
